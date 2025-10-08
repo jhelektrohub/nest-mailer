@@ -1,5 +1,5 @@
 import { createTransport } from 'nodemailer';
-import * as Mail from 'nodemailer/lib/mailer';
+import { Transporter } from 'nodemailer';
 
 import {
   MailerOptions,
@@ -15,7 +15,7 @@ export class MailerTransportFactory implements IMailerTransportFactory {
     private readonly options: MailerOptions,
   ) {}
 
-  public createTransport(opts?: TransportType): Mail {
+  public createTransport(opts?: TransportType): Transporter {
     return createTransport(
       opts || this.options.transport,
       this.options.defaults,
