@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as SMTPTransport from 'nodemailer/lib/smtp-transport';
-import * as nodemailerMock from 'nodemailer-mock';
+import { createTransport } from 'nodemailer';
 
 import MailMessage from 'nodemailer/lib/mailer/mail-message';
 
@@ -17,6 +17,8 @@ import { MailerService } from './mailer.service';
 import { HandlebarsAdapter } from './adapters/handlebars.adapter';
 import { PugAdapter } from './adapters/pug.adapter';
 import { EjsAdapter } from './adapters/ejs.adapter';
+
+const inMemorySentMails: MailMessage[] = [];
 
 /**
  * Common testing code for testing up a testing module and MailerService
@@ -72,7 +74,33 @@ async function getMailerServiceWithCustomTransport(
 ): Promise<MailerService> {
   class TestTransportFactory implements MailerTransportFactory {
     createTransport(options?: TransportType) {
-      return nodemailerMock.createTransport({ host: 'localhost', port: -100 });
+      const plugin = {
+        name: 'in-memory',
+        version: '0.1.0',
+        send(
+          mail: MailMessage,
+          callback: (
+            err: Error | null,
+            info: SMTPTransport.SentMessageInfo,
+          ) => void,
+        ): void {
+          inMemorySentMails.push(mail);
+          callback(null, {
+            envelope: {
+              from: mail.data.from as string,
+              to: Array.isArray(mail.data.to)
+                ? (mail.data.to as unknown as string[])
+                : [mail.data.to as unknown as string],
+            },
+            messageId: 'INMEM',
+            accepted: [],
+            rejected: [],
+            pending: [],
+            response: 'ok',
+          });
+        },
+      } as any;
+      return createTransport(plugin as any);
     }
   }
   const module: TestingModule = await Test.createTestingModule({
@@ -351,6 +379,7 @@ describe('MailerService', () => {
   });
 
   it('should use custom transport to send mail', async () => {
+    inMemorySentMails.length = 0;
     const service = await getMailerServiceWithCustomTransport({
       transport: 'smtps://user@domain.com:pass@smtp.domain.com',
     });
@@ -360,6 +389,6 @@ describe('MailerService', () => {
       html: 'This is test.',
     });
 
-    expect(nodemailerMock.mock.getSentMail().length).toEqual(1);
+    expect(inMemorySentMails.length).toEqual(1);
   });
 });
