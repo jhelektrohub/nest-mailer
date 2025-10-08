@@ -1,5 +1,5 @@
 {
-  "name": "@nestjs-modules/mailer",
+  "name": "nest-mailer",
   "version": "2.0.2",
   "private": false,
   "description": "NestJS - a mailer module (@mailer)",
@@ -9,13 +9,13 @@
     "mailer",
     "nodejs"
   ],
-  "homepage": "https://github.com/nest-modules/mailer#readme",
+  "homepage": "https://github.com/jhelektrohub/nest-mailer#readme",
   "bugs": {
-    "url": "https://github.com/nest-modules/mailer/issues"
+    "url": "https://github.com/jhelektrohub/nest-mailer/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nest-modules/mailer.git"
+    "url": "git+https://github.com/jhelektrohub/nest-mailer.git"
   },
   "license": "MIT",
   "author": "Nest Modules TM",
@@ -26,7 +26,8 @@
     "Paweł Partyka <partyka95@icloud.com>",
     "Alexandre TITEUX <alexandretiteux@gmail.com>",
     "Yanarp",
-    "Joao vitor FREZYN <00001097715413SP@al.educacao.sp.gov.br>"
+    "Joao vitor FREZYN <00001097715413SP@al.educacao.sp.gov.br>",
+    "Joschua Hass <jh@elektrohub.de>"
   ],
   "scripts": {
     "prebuild": "rimraf dist",
